@@ -1,12 +1,44 @@
 # create a fastapi get request to get the data from the database
-from fastapi import FastAPI
+from fastapi import FastAPI,Depends
 from fastapi.responses import JSONResponse
 from schemas.student import Student
-from config.db import con
+from config.db import con,Settings
 from models.students import students
+from fastapi.middleware.cors import CORSMiddleware
+from starlette.exceptions import HTTPException as starletteHTTPException
+from functools import lru_cache
 
 app = FastAPI()
 
+import config
+# cross origin resource sharing
+origins = [
+    "http://localhost:8000",
+]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# global http starlette exeption handler
+@app.exception_handler(starletteHTTPException)
+async def http_exception_handler(request, exc):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"message": exc.detail}
+    )
+#dependency injection for the settings class in the config file 
+@lru_cache()
+def get_settings():
+    return config.db.Settings()
+
+# printing app_name from the .env file
+@app.get("/api")
+async def get_app_name(settings: config.db.Settings = Depends(get_settings)):
+    return {"app_name": settings.app_name}
 
 # @app.get("/api/students")
 # async def get_students():

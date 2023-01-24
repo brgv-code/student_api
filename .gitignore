@@ -20,6 +20,12 @@ venv
 docs.zip
 archive.zip
 node_modules
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+.env.staging
 # vim temporary files
 *~
 .*.sw?
