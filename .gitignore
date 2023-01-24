@@ -13,8 +13,8 @@ coverage.xml
 test.db
 log.txt
 Pipfile.lock
-env3.*
-env
+venv3.*
+venv
 docs_build
 venv
 docs.zip
